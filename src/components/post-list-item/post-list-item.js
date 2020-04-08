@@ -36,7 +36,7 @@ export default class PostListItem extends Component {
 
     return(
       <div className = {classNames}>
-        <span onClick = {this.onLike} className = "app-list-item-label">
+        <span className = "app-list-item-label">
           {label}
         </span>
         <div className = "d-flex justify-content-center align-items-center">
@@ -46,7 +46,7 @@ export default class PostListItem extends Component {
           <button type = "button" className = "btn-trash btn-sm">
             <i className = "fa fa-trash-o"></i>
           </button>
-          <i className = "fa fa-heart"></i>
+          <i  onClick = {this.onLike} className = "fa fa-heart"></i>
         </div>
       </div>
     )
