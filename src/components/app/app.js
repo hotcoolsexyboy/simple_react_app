@@ -18,13 +18,15 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       data: [
-        {label: "Going to learn React", important: true, id: 1},
-        {label: "That is so fun!", important: false, id: 2},
-        {label: "I need a break...", important: true, id: 3}
+        {label: "Going to learn React", important: true, like: false, id: 1},
+        {label: "That is so fun!", important: false, like: false, id: 2},
+        {label: "I need a break...", important: true, like: true, id: 3}
       ]
     };
     this.deleteItem = this.deleteItem.bind(this);
     this.addItem = this.addItem.bind(this);
+    this.onToggleImportant = this.onToggleImportant.bind(this);
+    this.onToggleLiked = this.onToggleLiked.bind(this);
 
     this.maxId = 4;
   }
@@ -58,16 +60,61 @@ export default class App extends React.Component {
     })
   }
 
+  onToggleImportant(id) {
+    this.setState(({data}) => {
+      const index = data.findIndex((elem) => elem.id === id);
+      const old = data[index];
+      const newItem = {...old, important: !old.important};
+
+      const before = data.slice(0, index);
+      const after = data.slice(index + 1);
+
+      const newArr = [...before, newItem, ...after];
+
+      return {
+        data: newArr
+      }
+    })
+  }
+
+  onToggleLiked(id) {
+    this.setState(({data}) => {
+      const index = data.findIndex((elem) => elem.id === id);
+      const old = data[index];
+      const newItem = {...old, like: !old.like};
+
+      const before = data.slice(0, index);
+      const after = data.slice(index + 1);
+
+      const newArr = [...before, newItem, ...after];
+
+      return {
+        data: newArr
+      }
+    })
+  }
+
   render() {
     const {data} = this.state;
+
+    const liked = data.filter(item => item.like).length;
+    const allPosts = data.length;
+
     return(
       <div className = {AppStyles.app}>
-        <AppHeader />
+        <AppHeader 
+          liked={liked}
+          allPosts={allPosts}
+        />
         <div className = "search-panel d-flex">
           <SearchPanel />
           <PostStatusFilter />
         </div>
-        <PostList posts = {data} onDelete={this.deleteItem}/>
+        <PostList posts = {data}
+                  onDelete={this.deleteItem}
+                  onToggleImportant={this.onToggleImportant}
+                  onToggleLiked={this.onToggleLiked}
+        />
         <PostAddForm onAdd={this.addItem}/>
       </div>
     )
