@@ -21,12 +21,14 @@ export default class App extends React.Component {
         {label: "Going to learn React", important: true, like: false, id: 1},
         {label: "That is so fun!", important: false, like: false, id: 2},
         {label: "I need a break...", important: true, like: true, id: 3}
-      ]
+      ],
+      term: ''
     };
     this.deleteItem = this.deleteItem.bind(this);
     this.addItem = this.addItem.bind(this);
     this.onToggleImportant = this.onToggleImportant.bind(this);
     this.onToggleLiked = this.onToggleLiked.bind(this);
+    this.onUpdateSearch = this.onUpdateSearch.bind(this);
 
     this.maxId = 4;
   }
@@ -94,11 +96,29 @@ export default class App extends React.Component {
     })
   }
 
+  searchPost(items, term) {
+    if(term.length === 0) {
+      return items
+    }
+    const filteredArr = items.filter(item => {
+      const lowerLabel = item.label.toLowerCase();
+      const lowerTerm = term.toLowerCase();
+      return (lowerLabel.indexOf(lowerTerm) > -1)
+    });
+    return filteredArr;
+  }
+
+  onUpdateSearch(term) {
+    this.setState({term});
+  }
+
   render() {
-    const {data} = this.state;
+    const {data, term} = this.state;
 
     const liked = data.filter(item => item.like).length;
     const allPosts = data.length;
+
+    const visiblePosts = this.searchPost(data, term);
 
     return(
       <div className = {AppStyles.app}>
@@ -107,10 +127,10 @@ export default class App extends React.Component {
           allPosts={allPosts}
         />
         <div className = "search-panel d-flex">
-          <SearchPanel />
+          <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
           <PostStatusFilter />
         </div>
-        <PostList posts = {data}
+        <PostList posts = {visiblePosts}
                   onDelete={this.deleteItem}
                   onToggleImportant={this.onToggleImportant}
                   onToggleLiked={this.onToggleLiked}
